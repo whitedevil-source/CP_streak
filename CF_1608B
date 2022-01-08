@@ -1,0 +1,324 @@
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<sstream>
+#include<queue>
+#include<cmath>
+#include<iomanip>
+#include<set>
+#include<map>
+#include<string>
+#include<iterator>
+using namespace std;
+
+
+#define ll long long
+#define pb push_back
+#define pll pair<ll,ll> 
+#define mll map<ll,ll>
+#define pii pair<int,int>
+#define vpii vector<pii>
+#define rep(i,n) for(int i=0; i<n; i++)
+#define All(x,v) for(auto x:v)
+#define arrin(a,n) ll a[n]; rep(i,n) cin>>a[i]
+#define vi vector<int>
+#define vll vector<ll>
+#define nl "\n"
+#define print(arr) All(x,arr) cout<<x<<" "; cout<<nl
+#define sz(x) (int)x.size()
+#define all(v) v.begin(),v.end()
+#define ing(m,ad) rep(i,m){ int u,v; cin>>u>>v; u--;v--; ad[u].pb(v); ad[v].pb(u);}
+#define vdsort(v) sort(v.begin(),v.end(),greater<int>())
+#define F first
+#define S second
+#define mod 1'000'000'007
+
+
+const int MAXN = 100'005;
+int spf[MAXN];
+ll fac1[MAXN], fac2[MAXN], inv[MAXN];
+ll gcd(ll x, ll y) { return y ? gcd(y, x % y) : x; }
+
+template <typename C, typename T = std::decay_t<decltype(*begin(std::declval<C>()))>, typename std::enable_if<!std::is_same<C, std::string>::value>::type* = nullptr>
+std::ostream& operator<<(std::ostream& os, const C& container)
+{
+    bool first = true;
+    std::stringstream ss;
+    ss << '[';
+    for (const auto& x : container)
+    {
+        if (!first)
+        {
+            ss << ", ";
+        }
+        first = false;
+        ss << x;
+    }
+    ss << ']';
+    return os << ss.str();
+}
+template <class T1, class T2>
+std::ostream& operator<<(std::ostream& os, const std::pair<T1, T2>& p)
+{
+    os << '{' << p.first << ", " << p.second << '}';
+    return os;
+}
+vector<string> vec_splitter(string S)
+{
+    S += ',';
+    vector<string> res;
+    while (!S.empty())
+    {
+        res.push_back(S.substr(0, S.find(',')));
+        S = S.substr(S.find(',') + 1);
+    }
+    return res;
+}
+
+template <typename Head, typename... Tail>
+void debug_out(vector<string> args, int idx, int LINE_NUM, Head H, Tail... T)
+{
+    if (idx > 0)
+        cerr << ", ";
+    else
+        cerr << "Line(" << LINE_NUM << ") ";
+    stringstream ss;
+    ss << H;
+    cerr << args[idx] << " = " << ss.str();
+    debug_out(args, idx + 1, LINE_NUM, T...);
+}
+#ifdef DEBUG
+#define debug(...) debug_out(vec_splitter(#__VA_ARGS__), 0, __LINE__, __VA_ARGS__)
+#else
+#define debug(...) 42
+#endif
+
+void sieve() {
+    spf[1] = 1;
+    for (int i = 2; i < MAXN; i++)  spf[i] = i;
+    for (int i = 4; i < MAXN; i += 2) spf[i] = 2;
+    for (int i = 3; i * i < MAXN; i++) {
+        if (spf[i] == i)
+            for (int j = i * i; j < MAXN; j += i)
+                if (spf[j] == j)  spf[j] = i;
+    }
+}
+vector<int> getFactorization(int x) {
+    vector<int> ret;
+    while (x != 1) {
+        ret.push_back(spf[x]);
+        x = x / spf[x];
+    }
+    return ret;
+}
+
+ll exp(ll n, ll m) {
+    ll a = 1;
+    while (m) {
+        if (m & 1) a = (a * n % mod) % mod;
+        m /= 2;
+        n = (n * n) % mod;
+    }
+    return a;
+}
+
+void pre() {
+    fac1[0] = fac2[0] = inv[1] = 1;
+for (int i = 1; i < MAXN; i++) {
+    fac1[i] = (fac1[i - 1] * i) % mod;
+    if (i > 1) inv[i] = (mod - ((ll)(mod / i) * inv[mod % i]) % mod) % mod;
+}
+for (int i = 1; i < MAXN; i++) fac2[i] = (fac2[i - 1] * inv[i]) % mod;
+}
+ll C(int n, int k) {
+    if (n < k) return 0;
+    return ((fac1[n] * fac2[n - k] % mod) * fac2[k] % mod);
+}
+int gcd(int a, int b)
+{
+    if (a == 0)
+        return b;
+    if (b == 0)
+        return a;
+    if (a == b)
+        return a;
+    if (a > b)
+        return gcd(a - b, b);
+    return gcd(a, b - a);
+}
+
+//Counting frequency of substring 'pat' in string 'txt'
+int countFreq(string pat, string txt)
+{
+    int M = pat.length();
+    int N = txt.length();
+    int res = 0;
+    for (int i = 0; i <= N - M; i++)
+    {
+        int j;
+        for (j = 0; j < M; j++)
+            if (txt[i + j] != pat[j])
+                break;
+        if (j == M) res++;
+    }
+    return res;
+}
+
+// Comparator function to sort pairs
+// according to second value
+bool cmp(pair<int, int>& a,
+    pair<int, int>& b)
+{
+    return a.second < b.second;
+}
+
+int nthDigit(ll a, ll n, ll b)
+{
+    // Skip N-1 Digits in Base B
+    for (int i = 1; i < n; i++)
+        a = a / b;
+    // Nth Digit from right in Base B
+    return a % b;
+}
+
+bool isPerfectSquare(long double x)
+{
+    if (x >= 0) {
+        long long sr = sqrt(x);
+        return (sr * sr == x);
+    }
+    return false;
+}
+
+bool isPowerof2(int n) {
+    return (n && !(n & n - 1));
+}
+
+string decimalToBinary(ll N)
+{
+    string B_Number = "";
+    while (N != 0) {
+        if (N % 2 == 0) B_Number = "0" + B_Number;
+        else B_Number = "1" + B_Number;
+        N = N / 2;
+    }
+    return B_Number;
+}
+
+void bwavesort(vector<int> arr,int n) {
+    for (int i = 2; i <= n-1; i+=2) {
+        if (arr[i] > arr[i - 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i - 1];
+            arr[i - 1] = temp;
+        }
+        if (arr[i] > arr[i + 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        cout << arr[i] << " ";
+    }
+}
+void uwavesort(vector<int> arr, int n) {
+    for (int i = 1; i < n - 1; i+=2) {
+        if (arr[i] < arr[i - 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i - 1];
+            arr[i - 1] = temp;
+        }
+        if (arr[i] < arr[i + 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+        }
+    }
+    
+    for (int i = 0; i < arr.size(); i++) {
+        cout << arr[i] << " ";
+    }
+}
+void ewavesort(vector<int> arr, int n) {
+    for (int i = 2; i <= n - 1; i += 2) {
+        if (arr[i] < arr[i - 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i - 1];
+            arr[i - 1] = temp;
+        }
+        if (arr[i] < arr[i + 1]) {
+            int temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+        }
+    }
+    if (arr[n] < arr[n - 1]) {
+        int te = arr[n];
+        arr[n] = arr[n - 1];
+        arr[n - 1] = te;
+    }
+    for (int i = 1; i <= n; i++) {
+        cout << arr[i] << " ";
+    }
+}
+void printVec(vector<int> v2) {
+    
+    for (int i = 0; i < v2.size(); i++) {
+        cout << v2[i] << " " ;
+    }
+}
+
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    // freopen("input.txt","r",stdin); freopen("output.txt","w",stdout);
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, a, b;
+        cin >> n >> a >> b;
+        if (a + b + 2 <= n) {
+            std::vector<int> vec1;
+            for (int i = 0; i <= (a+b+2); i++) {
+                vec1.push_back(i);
+            }
+            std::vector<int> vec2;
+            for (int i = (a + b + 3); i <= n; i++) {
+                vec2.push_back(i);
+            }
+            std::vector<int> vec3;
+            for (int i = 0; i < n - (a + b + 2); i++) {
+                vec3.push_back(i+1);
+            }
+            std::vector<int> vec4;
+            for (int i = n-(a + b + 1); i <= n; i++) {
+                vec4.push_back(i);
+            }
+            if (a == b + 1) {
+                printVec(vec3);
+                uwavesort(vec4,(a+b+2));
+                cout << endl;
+            }
+            else if (b == a + 1) {
+                bwavesort(vec1, a + b + 2);
+                printVec(vec2);
+                cout << endl;
+            }
+            else if (a == b) {
+                ewavesort(vec1, a + b + 2);
+                printVec(vec2);
+                cout << endl;
+            }
+            else {
+                cout << -1 << endl;
+            }
+        }
+        else {
+            cout << -1 << endl;
+        }
+    }
+    return 0;
+}
+
