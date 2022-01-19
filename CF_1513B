@@ -1,0 +1,38 @@
+import math
+def Binary(n):
+    s = bin(n)
+    s1 = s[2:]
+    return s1
+def Decimal(n):
+    return int(n,2)
+
+inf=1000000007
+
+t=int(input())
+for t0 in range(t):
+    ans=0
+    n=int(input())
+    cnt_one=[0 for i in range(31)]
+    arr=list(map(int,input().split(' ')))
+    for i in range(n):
+        s=Binary(arr[i])
+        for j in range(len(s)-1,-1,-1):
+            if(s[j]=='1'):
+                cnt_one[len(s)-1-j]+=1
+    req=0
+    for i in range(n):
+        s=Binary(arr[i])
+        temp=0
+        for j in range(len(s)-1,-1,-1):
+            if(s[j]=='0'):
+                temp+=1
+            else:
+               if(cnt_one[len(s)-1-j]==n):
+                   temp+=1
+        if(temp==len(s)):
+            req+=1
+    if(req<2):
+        ans=0
+    else:
+        ans=(math.factorial(n-2)*req*(req-1))%inf
+    print(ans)
