@@ -1,0 +1,60 @@
+import math
+def Binary(n):
+    s = bin(n)
+    s1 = s[2:]
+    return s1
+def Decimal(n):
+    return int(n,2)
+
+inf=1000000007
+
+def check(M,x,y,n,m):
+    k=True
+    if(x>0 and M[x-1][y]>=M[x][y]):
+        k=False
+    
+    if(y>0 and M[x][y-1]>=M[x][y]):
+        k=False
+
+    if(y<m-1 and M[x][y]>=M[x][y+1]):
+        k=False
+
+    if(x<n-1 and M[x][y]>=M[x+1][y]):
+        k=False
+
+    return k
+
+n,m=map(int,input().split(' '))
+a=[]
+for i in range(n):
+    a.append(list(map(int,input().split(' '))))
+b=[]
+for i in range(n):
+    b.append(list(map(int,input().split(' '))))
+    
+c=0
+ec=True
+for i in range(n):
+    for j in range(m):
+        if(a[i][j]>b[i][j]):
+            temp=a[i][j]
+            a[i][j]=b[i][j]
+            b[i][j]=temp
+for i in range(n):
+    for j in range(m):
+        if(check(a,i,j,n,m) and check(b,i,j,n,m)):
+            continue
+        else:
+            ec=False
+        if(ec==False):
+            break
+    if(ec==False):
+        break
+        
+if(ec):
+    print("Possible")
+    
+else:
+    print("Impossible")
+
+
