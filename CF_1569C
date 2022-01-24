@@ -1,0 +1,38 @@
+import math
+import sys
+def Binary(n):
+    s = bin(n)
+    s1 = s[2:]
+    return s1
+def Decimal(n):
+    return int(n,2)
+ 
+def PowerOf(x,d):
+    c=0
+    while(x%d==0):
+        c+=1
+        x=x//d
+    return c
+inf=998244353
+def comb(x,y):
+    return math.factorial(x)/(math.factorial(y)*math.factorial(x-y))
+for t in range(int(input())):
+    n=int(input())
+    a=list(map(int,input().split(' ')))
+    mx=max(a)
+    cnt1=a.count(mx)
+    cnt2=0
+    nice=0
+    for el in a:
+        if(el<=(mx-2)):
+            cnt2+=1
+    if(cnt1>1):
+        nice=math.factorial(n)%inf
+    elif(cnt2==n-1):
+        nice=0
+    else:
+        notnice=0
+        for i in range(cnt2+1):
+            notnice+=comb(cnt2,i)*math.factorial(n-1-i)*math.factorial(i)
+        nice=(math.factorial(n)-notnice)%inf
+    print(int(nice))
